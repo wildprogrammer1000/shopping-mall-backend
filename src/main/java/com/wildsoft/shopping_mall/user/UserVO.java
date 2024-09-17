@@ -9,5 +9,6 @@ public class UserVO {
   private String role;
   private String email;
   private String nickname;
-  private String create_time;
+  private String created_at;
+  private String updated_at;
 }
