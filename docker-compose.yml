@@ -1,0 +1,19 @@
+version: "3.8"
+services:
+  maria:
+    container_name: db
+    image: mariadb
+    ports:
+      - 3306:3306
+    volumes:
+      - maria:/var/lib/mysql
+    healthcheck:
+      test: ["CMD-SHELL", "mariadb-admin ping -h localhost -u root -ptest"]
+
+      timeout: 1s
+      interval: 1s
+      retries: 3
+      start_period: 10s
+volumes:
+  maria:
+    external: true
