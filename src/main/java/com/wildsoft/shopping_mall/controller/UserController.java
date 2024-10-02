@@ -7,6 +7,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.wildsoft.shopping_mall.user.UserDao;
 import com.wildsoft.shopping_mall.user.UserVO;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+
 
 @RestController
 public class UserController {
@@ -23,4 +26,11 @@ public class UserController {
   public UserVO mypage(UserVO vo) {
     return dao.getUser(vo);
   }
+
+  @PostMapping("/signin/google")
+  public String postMethodName(@RequestBody String code) {
+      
+      return code;
+  }
+  
 }
