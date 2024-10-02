@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.wildsoft.shopping_mall.shop.ShopDao">
+
+  <!-- 상품 -->
+  <select id="getProductList"
+    parameterType="com.wildsoft.shopping_mall.shop.ProductVO"
+    resultType="com.wildsoft.shopping_mall.shop.ProductVO">
+    <![CDATA[
+      select rnum, q.*
+      from (
+        select
+          row_number() over (order by product_id desc) as rnum,
+          k.*
+        from (
+          select * from products where 1=1
+    ]]>
+    <if test="search_type == 'product_name'">
+    <![CDATA[
+          and product_name like concat('%', #{search_value}, '%')
+    ]]>
+    </if>
+    <if test="search_type == 'category'">
+    <![CDATA[
+          and category like concat('%', #{category}, '%')
+    ]]>
+    </if>
+    <if test="search_type == 'created_at'">
+    <![CDATA[
+          and created_at like concat('%', #{created_at}, '%')
+    ]]>
+    </if>
+    <![CDATA[
+        ) k
+      ) q
+      where rnum between #{start} and #{end}
+    ]]>
+  </select>
+
+	<select id="getProductsCount" resultType="int">
+    select count(*) as total_count from products
+  </select>
+
+</mapper>

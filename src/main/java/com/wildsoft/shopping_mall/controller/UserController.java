@@ -23,9 +23,4 @@ public class UserController {
   public UserVO mypage(UserVO vo) {
     return dao.getUser(vo);
   }
-
-  @GetMapping("/userUpdate")
-  public String userUpdate(UserVO vo) {
-    return "redirect:/userList";
-  }
 }
