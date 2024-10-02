@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api")
 @CrossOrigin(origins = "${cors.allowed.origins}")
 public class ShopController {
 

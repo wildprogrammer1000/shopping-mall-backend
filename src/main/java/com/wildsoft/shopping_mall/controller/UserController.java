@@ -2,6 +2,7 @@ package com.wildsoft.shopping_mall.controller;
 
 import java.util.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -12,17 +13,18 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 
 @RestController
+@CrossOrigin(origins = "${cors.allowed.origins}")
 public class UserController {
 
   @Autowired
   private UserDao dao;
 
-  @GetMapping("/api/userList")
+  @GetMapping("/userList")
   public List<UserVO> userList(UserVO vo) {
     return dao.getUserList(vo);
   }
 
-  @GetMapping("/api/mypage")
+  @GetMapping("/mypage")
   public UserVO mypage(UserVO vo) {
     return dao.getUser(vo);
   }
