@@ -79,6 +79,19 @@
 			<version>3.0.3</version>
 			<scope>test</scope>
 		</dependency>
+
+		<!-- OAuth2 클라이언트 -->
+    <!-- <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-oauth2-client</artifactId>
+    </dependency> -->
+
+		<dependency>
+			<groupId>io.github.cdimascio</groupId>
+			<artifactId>dotenv-java</artifactId>
+			<version>3.0.2</version>
+		</dependency>
+
 	</dependencies>
 
 	<build>
