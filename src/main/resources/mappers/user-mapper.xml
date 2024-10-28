@@ -37,7 +37,18 @@
     parameterType="com.wildsoft.shopping_mall.user.UserVO"
     resultType="com.wildsoft.shopping_mall.user.UserVO">
 
-      select * from users where id = #{id}
+      select * from users
+			<where>
+        <if test="id != null">
+            id = #{id}
+        </if>
+        <if test="email != null">
+            and email = #{email}
+        </if>
+    </where>
   </select>
 
- </mapper>
+	<insert id="insertUserEmail" parameterType="String">
+		insert into users (email)	values (#{email})
+	</insert>
+</mapper>

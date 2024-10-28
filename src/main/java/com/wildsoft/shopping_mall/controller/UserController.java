@@ -23,6 +23,7 @@ import com.wildsoft.shopping_mall.user.UserDao;
 import com.wildsoft.shopping_mall.user.UserVO;
 
 import io.github.cdimascio.dotenv.Dotenv;
+import jakarta.servlet.http.HttpSession;
 
 @RestController
 @CrossOrigin(origins = "${cors.allowed.origins}")
@@ -49,7 +50,7 @@ public class UserController {
   }
 
   // 구글 로그인
-  @GetMapping("/signup")
+  @GetMapping({ "/signup", "/signin" })
   public ModelAndView googleSignup() {
     String redirectUrl = GOOGLE_AUTH_URL + "?client_id=" + googleClientId +
         "&redirect_uri=" + URLEncoder.encode(googleRedirectUri, StandardCharsets.UTF_8) +
@@ -60,7 +61,7 @@ public class UserController {
   }
 
   @GetMapping("/auth/google")
-  public String googleCallback(@RequestParam String code) {
+  public UserVO googleCallback(@RequestParam String code, HttpSession session) {
     try {
       RestTemplate restTemplate = new RestTemplate();
       HttpHeaders headers = new HttpHeaders();
@@ -101,12 +102,27 @@ public class UserController {
       String email = (String) userInfo.get("email");
       String name = (String) userInfo.get("name");
 
-      System.out.println("User Info: " + name + " (" + email + ")");
-      return "Google login successful! Welcome " + name + " (" + email + ")";
+      // - 진입 시도 시 users 테이블에 해당 이메일 주소가 있는지 확인
+      UserVO vo = new UserVO();
+      vo.setEmail(email);
+      UserVO user = dao.getUser(vo);
+
+      if (user == null) {
+        System.out.println("User Info: " + name + " (" + email + ")");
+        session.setAttribute("email", email);
+
+        dao.insertUserEmail(email);
+
+        return vo;
+      } else {
+        session.setAttribute("user", user);
+
+        return user;
+      }
 
     } catch (Exception e) {
       e.printStackTrace();
-      return "Google login failed!";
+      throw new RuntimeException("Google login failed");
     }
   }
 }

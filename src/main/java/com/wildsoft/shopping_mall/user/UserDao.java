@@ -8,4 +8,5 @@ import org.apache.ibatis.annotations.Mapper;
 public interface UserDao {
   List<UserVO> getUserList(UserVO vo);
   UserVO getUser(UserVO vo);
+  void insertUserEmail(String email);
 }
