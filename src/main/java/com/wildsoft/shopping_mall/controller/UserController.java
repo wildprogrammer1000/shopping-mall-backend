@@ -13,8 +13,9 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -39,6 +40,18 @@ public class UserController {
   private final String GOOGLE_TOKEN_URL = "https://oauth2.googleapis.com/token";
   private final String GOOGLE_USER_INFO_URL = "https://www.googleapis.com/oauth2/v3/userinfo";
 
+  static public class CodeRequest {
+    private String code;
+
+    public String getCode() {
+      return code;
+    }
+
+    public void setCode(String code) {
+      this.code = code;
+    }
+  }
+
   @GetMapping("/userList")
   public List<UserVO> userList(UserVO vo) {
     return dao.getUserList(vo);
@@ -60,9 +73,11 @@ public class UserController {
     return new ModelAndView("redirect:" + redirectUrl);
   }
 
-  @GetMapping("/auth/google")
-  public UserVO googleCallback(@RequestParam String code, HttpSession session) {
+  @PostMapping("/auth/google")
+  public UserVO googleCallback(@RequestBody CodeRequest codeReq, HttpSession session) {
     try {
+      String code = codeReq.getCode();
+
       RestTemplate restTemplate = new RestTemplate();
       HttpHeaders headers = new HttpHeaders();
       headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
