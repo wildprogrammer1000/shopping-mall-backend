@@ -8,5 +8,13 @@ import org.apache.ibatis.annotations.Mapper;
 public interface UserDao {
   List<UserVO> getUserList(UserVO vo);
   UserVO getUser(UserVO vo);
-  void insertUserEmail(String email);
+  void insertUserEmail(UserVO vo);
+  void updateUserNickname(UserVO vo);
+
+  // 배송지
+  int getShippingInfosIsDefault(ShippingInfoVO vo);
+  void updateShippingInfosIsDefault(ShippingInfoVO vo);
+  void insertShippingInfo(ShippingInfoVO vo);
+  List<ShippingInfoVO> getShippingInfosList(ShippingInfoVO vo);
+  void deleteShippingInfo(ShippingInfoVO vo);
 }

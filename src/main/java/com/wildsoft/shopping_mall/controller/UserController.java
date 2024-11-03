@@ -17,14 +17,15 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.servlet.ModelAndView;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.wildsoft.shopping_mall.user.ShippingInfoVO;
 import com.wildsoft.shopping_mall.user.UserDao;
 import com.wildsoft.shopping_mall.user.UserVO;
 
 import io.github.cdimascio.dotenv.Dotenv;
 import jakarta.servlet.http.HttpSession;
+import lombok.Data;
 
 @RestController
 @CrossOrigin(origins = "${cors.allowed.origins}")
@@ -40,16 +41,9 @@ public class UserController {
   private final String GOOGLE_TOKEN_URL = "https://oauth2.googleapis.com/token";
   private final String GOOGLE_USER_INFO_URL = "https://www.googleapis.com/oauth2/v3/userinfo";
 
+  @Data
   static public class CodeRequest {
     private String code;
-
-    public String getCode() {
-      return code;
-    }
-
-    public void setCode(String code) {
-      this.code = code;
-    }
   }
 
   @GetMapping("/userList")
@@ -57,21 +51,17 @@ public class UserController {
     return dao.getUserList(vo);
   }
 
-  @GetMapping("/mypage")
-  public UserVO mypage(UserVO vo) {
-    return dao.getUser(vo);
-  }
+  // // 구글 로그인
+  // @GetMapping({ "/signup", "/signin" })
+  // public ModelAndView googleSignup() {
+  // String redirectUrl = GOOGLE_AUTH_URL + "?client_id=" + googleClientId +
+  // "&redirect_uri=" + URLEncoder.encode(googleRedirectUri,
+  // StandardCharsets.UTF_8) +
+  // "&response_type=code&scope=email%20profile";
 
-  // 구글 로그인
-  @GetMapping({ "/signup", "/signin" })
-  public ModelAndView googleSignup() {
-    String redirectUrl = GOOGLE_AUTH_URL + "?client_id=" + googleClientId +
-        "&redirect_uri=" + URLEncoder.encode(googleRedirectUri, StandardCharsets.UTF_8) +
-        "&response_type=code&scope=email%20profile";
-
-    System.out.println("Redirecting to: " + redirectUrl);
-    return new ModelAndView("redirect:" + redirectUrl);
-  }
+  // System.out.println("Redirecting to: " + redirectUrl);
+  // return new ModelAndView("redirect:" + redirectUrl);
+  // }
 
   @PostMapping("/auth/google")
   public UserVO googleCallback(@RequestBody CodeRequest codeReq, HttpSession session) {
@@ -124,9 +114,10 @@ public class UserController {
 
       if (user == null) {
         System.out.println("User Info: " + name + " (" + email + ")");
+        vo.setPlatform("google");
         session.setAttribute("email", email);
 
-        dao.insertUserEmail(email);
+        dao.insertUserEmail(vo);
 
         return vo;
       } else {
@@ -140,4 +131,40 @@ public class UserController {
       throw new RuntimeException("Google login failed");
     }
   }
+
+  @PostMapping("/user/nickname")
+  public void updateNickname(@RequestBody UserVO vo) {
+    dao.updateUserNickname(vo);
+  }
+
+  @GetMapping("/user/mypage")
+  public UserVO mypage(@RequestBody UserVO vo) {
+    return dao.getUser(vo);
+  }
+
+  // 배송지
+  @PostMapping("/user/insertShippingInfo")
+  public void insertShippingInfo(@RequestBody ShippingInfoVO vo) {
+    // 1. shippingInfos 테이블에 해당 id의 is_default 가 1인 컬럼이 있는지 확인하는 쿼리
+    int isDefaultCount = dao.getShippingInfosIsDefault(vo);
+
+    // 2. 테이블에 is_default가 1인 컬럼이 있는데 1로 선택한 경우 - spippingInfos 테이블의 is_default 컬럼
+    // 나머지를 모두 0으로 수정하는 쿼리
+    if (isDefaultCount == 1) {
+      dao.updateShippingInfosIsDefault(vo);
+    }
+    // 3. insert 쿼리 (id, name, phone, address, is_default, nickname)
+    dao.insertShippingInfo(vo);
+  }
+
+  @GetMapping("/user/shippingInfosList")
+  public List<ShippingInfoVO> shippingInfosList(@RequestBody ShippingInfoVO vo) {
+    return dao.getShippingInfosList(vo);
+  }
+
+  @PostMapping("/user/deleteShippingInfo")
+  public void deleteShippingInfo(@RequestBody ShippingInfoVO vo) {
+    dao.deleteShippingInfo(vo);
+  }
+
 }

@@ -33,10 +33,17 @@
 		]]> -->
   </select>
 
+	<insert id="insertUserEmail" parameterType="com.wildsoft.shopping_mall.user.UserVO">
+		insert into users (platform, email)	values (#{platform}, #{email})
+	</insert>
+
+	<update id="updateUserNickname" parameterType="com.wildsoft.shopping_mall.user.UserVO">
+		update users set nickname = #{nickname} where email = #{email}
+	</update>
+
 	<select id="getUser"
     parameterType="com.wildsoft.shopping_mall.user.UserVO"
     resultType="com.wildsoft.shopping_mall.user.UserVO">
-
       select * from users
 			<where>
         <if test="id != null">
@@ -48,7 +55,27 @@
     </where>
   </select>
 
-	<insert id="insertUserEmail" parameterType="String">
-		insert into users (email)	values (#{email})
+	<!-- 배송지 -->
+	<select id="getShippingInfosIsDefault" 
+		parameterType="com.wildsoft.shopping_mall.user.ShippingInfoVO" 
+		resultType="int">
+			select count(*) from shipping_infos where id = #{id} and is_default = 1
+	</select>
+
+	<update id="updateShippingInfosIsDefault" parameterType="com.wildsoft.shopping_mall.user.ShippingInfoVO">
+		update shipping_infos set is_default = 0 where id = #{id}
+	</update>
+
+	<insert id="insertShippingInfo" parameterType="com.wildsoft.shopping_mall.user.ShippingInfoVO">
+		insert into shipping_infos (id, name, phone, address, is_default, nickname)	
+		values (#{id}, #{name}, #{phone}, #{address}, #{is_default}, #{nickname})
 	</insert>
+
+	<select id="getShippingInfosList" parameterType="com.wildsoft.shopping_mall.user.ShippingInfoVO">
+		select * from shipping_infos where id = #{id}
+	</select>
+
+	<delete id="deleteShippingInfo" parameterType="com.wildsoft.shopping_mall.user.ShippingInfoVO">
+		delete from shipping_infos where shipping_id = #{shipping_id}
+	</delete>
 </mapper>
