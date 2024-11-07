@@ -46,13 +46,15 @@
     resultType="com.wildsoft.shopping_mall.user.UserVO">
       select * from users
 			<where>
-        <if test="id != null">
-            id = #{id}
-        </if>
-        <if test="email != null">
-            and email = #{email}
-        </if>
-    </where>
+				<choose>
+					<when test="id == null or id == 0">
+						email = #{email}
+					</when>
+					<otherwise>
+						and id = #{id}
+					</otherwise>
+				</choose>
+    	</where>
   </select>
 
 	<!-- 배송지 -->

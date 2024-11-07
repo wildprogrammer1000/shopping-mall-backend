@@ -43,4 +43,30 @@
     select count(*) as total_count from products
   </select>
 
+  <select id="getProduct" 
+    parameterType="com.wildsoft.shopping_mall.shop.ProductVO"
+    resultType="com.wildsoft.shopping_mall.shop.ProductVO">
+      select * from products where product_id = #{product_id}
+  </select>
+
+  <insert id="insertProduct" parameterType="com.wildsoft.shopping_mall.shop.ProductVO">
+    insert into products (product_name, product_description, product_price, stock_quantity, category)
+    values (#{product_name}, #{product_description}, #{product_price}, #{stock_quantity}, #{category})
+  </insert>
+
+  <update id="updateProduct" parameterType="com.wildsoft.shopping_mall.shop.ProductVO">
+    update products
+    <set>
+      <if test="product_name != null">product_name = #{product_name},</if>
+      <if test="product_description != null">product_description = #{product_description},</if>
+      <if test="product_price != 0">product_price = #{product_price},</if>
+      <if test="stock_quantity != 0">stock_quantity = #{stock_quantity},</if>
+      <if test="category != null">category = #{category},</if>
+    </set>
+    where product_id = #{product_id}
+  </update>
+
+  <delete id="deleteProduct" parameterType="com.wildsoft.shopping_mall.shop.ProductVO">
+    delete from products where product_id = #{product_id}
+  </delete>
 </mapper>
