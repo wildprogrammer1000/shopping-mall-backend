@@ -69,4 +69,37 @@
   <delete id="deleteProduct" parameterType="com.wildsoft.shopping_mall.shop.ProductVO">
     delete from products where product_id = #{product_id}
   </delete>
+
+  <!-- 장바구니 -->
+  <select id="getCartList" 
+    parameterType="com.wildsoft.shopping_mall.shop.CartVO"
+    resultType="com.wildsoft.shopping_mall.shop.CartVO">
+      select id, cart_id, product_id, product_price, quantity, 
+      (quantity * product_price) as total_price, created_at, updated_at
+      from carts where id = #{id}
+  </select>
+
+  <select id="findCartItem" 
+    parameterType="com.wildsoft.shopping_mall.shop.CartVO"
+    resultType="com.wildsoft.shopping_mall.shop.CartVO">
+      select * from carts where id = #{id} and product_id = #{product_id}
+  </select>
+
+  <insert id="insertCart" parameterType="com.wildsoft.shopping_mall.shop.CartVO">
+    insert into carts (id, product_id, product_price, quantity)
+    values (#{id}, #{product_id}, #{product_price}, #{quantity})
+  </insert>
+
+  <update id="updateCart" parameterType="com.wildsoft.shopping_mall.shop.CartVO">
+    update carts set quantity = #{quantity}
+    where id = #{id} and product_id = #{product_id}
+  </update>
+
+  <delete id="deleteCart" parameterType="com.wildsoft.shopping_mall.shop.CartVO">
+    delete from carts where id = #{id} and product_id = #{product_id}
+  </delete>
+
+  <delete id="deleteCartAll" parameterType="com.wildsoft.shopping_mall.shop.CartVO">
+    delete from carts where id = #{id}
+  </delete>
 </mapper>
