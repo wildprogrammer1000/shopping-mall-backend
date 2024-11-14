@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.wildsoft.shopping_mall.shop.CartVO;
+import com.wildsoft.shopping_mall.shop.OrderVO;
 import com.wildsoft.shopping_mall.shop.ProductResponseVO;
 import com.wildsoft.shopping_mall.shop.ProductVO;
 import com.wildsoft.shopping_mall.shop.ShopDao;
@@ -28,6 +29,7 @@ public class ShopController {
   public ProductResponseVO getProductList(ProductVO vo) {
     List<ProductVO> productList = dao.getProductList(vo);
     int totalCount = dao.getProductsCount();
+
     return new ProductResponseVO(productList, totalCount);
   }
 
@@ -36,7 +38,7 @@ public class ShopController {
     dao.insertProduct(vo);
   }
 
-  @GetMapping("/getProduct")
+  @PostMapping("/getProduct")
   public ProductVO getProduct(@RequestBody ProductVO vo) {
 
     return dao.getProduct(vo);
@@ -98,4 +100,16 @@ public class ShopController {
   public void deleteCartAll(@RequestBody CartVO vo) {
     dao.deleteCartAll(vo);
   }
+
+  // 주문하기
+  @PostMapping("/addOrder")
+  public void addOrder(@RequestBody List<OrderVO> list) {
+    for (OrderVO vo : list) {
+      CartVO cart = new CartVO();
+      cart.setProduct_id(vo.getProduct_id());
+      dao.deleteCart(cart);
+      dao.insertOrder(vo);
+    }
+  }
+  
 }

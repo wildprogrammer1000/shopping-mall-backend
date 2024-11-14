@@ -20,5 +20,6 @@ public class ProductVO {
 
   // 검색
   private String search_type; 
+  private String date_search_type;
   private String search_value;
 }

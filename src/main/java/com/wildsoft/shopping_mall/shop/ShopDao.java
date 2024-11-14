@@ -21,4 +21,7 @@ public interface ShopDao {
   void updateCart(CartVO vo);
   void deleteCart(CartVO vo);
   void deleteCartAll(CartVO vo);
+
+  // 주문하기
+  void insertOrder(OrderVO vo);
 }

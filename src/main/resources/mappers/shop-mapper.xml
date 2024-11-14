@@ -8,35 +8,54 @@
   <select id="getProductList"
     parameterType="com.wildsoft.shopping_mall.shop.ProductVO"
     resultType="com.wildsoft.shopping_mall.shop.ProductVO">
-    <![CDATA[
-      select rnum, q.*
-      from (
-        select
-          row_number() over (order by product_id desc) as rnum,
-          k.*
+      <![CDATA[
+        select rnum, q.*
         from (
-          select * from products where 1=1
-    ]]>
-    <if test="search_type == 'product_name'">
-    <![CDATA[
-          and product_name like concat('%', #{search_value}, '%')
-    ]]>
-    </if>
-    <if test="search_type == 'category'">
-    <![CDATA[
-          and category like concat('%', #{category}, '%')
-    ]]>
-    </if>
-    <if test="search_type == 'created_at'">
-    <![CDATA[
-          and created_at like concat('%', #{created_at}, '%')
-    ]]>
-    </if>
-    <![CDATA[
-        ) k
-      ) q
-      where rnum between #{start} and #{end}
-    ]]>
+          select
+            row_number() over (order by product_id desc) as rnum,
+            k.*
+          from (
+            select * from products where 1=1
+      ]]>
+      <if test="search_type == 'product_name'">
+      <![CDATA[
+            and product_name like concat('%', #{search_value}, '%')
+      ]]>
+      </if>
+      <if test="search_type == 'category'">
+      <![CDATA[
+            and category like concat('%', #{search_value}, '%')
+      ]]>
+      </if>
+      <if test="search_type == 'created_at'">
+        <choose>
+          <when test="date_search_type == 'year'">
+            <![CDATA[
+              and YEAR(created_at) = #{search_value}
+            ]]>
+          </when>
+          <when test="date_search_type == 'month'">
+            <![CDATA[
+              and MONTH(created_at) = #{search_value}
+            ]]>
+          </when>
+          <when test="date_search_type == 'day'">
+            <![CDATA[
+              and DAY(created_at) = #{search_value}
+            ]]>
+          </when>
+          <otherwise>
+            <![CDATA[
+              and DATE(created_at) = DATE(#{search_value})
+            ]]>
+          </otherwise>
+        </choose>
+      </if>
+      <![CDATA[
+          ) k
+        ) q
+        where rnum between #{start} and #{end}
+      ]]>
   </select>
 
 	<select id="getProductsCount" resultType="int">
@@ -102,4 +121,10 @@
   <delete id="deleteCartAll" parameterType="com.wildsoft.shopping_mall.shop.CartVO">
     delete from carts where id = #{id}
   </delete>
+
+  <!-- 주문하기 -->
+  <insert id="insertOrder" parameterType="com.wildsoft.shopping_mall.shop.OrderVO">
+    insert into orders (order_id, id, product_id, quantity, total_price, shipping_fee, shipping_address)
+    values (#{id}, #{product_id}, #{product_price}, #{quantity})
+  </insert>
 </mapper>
