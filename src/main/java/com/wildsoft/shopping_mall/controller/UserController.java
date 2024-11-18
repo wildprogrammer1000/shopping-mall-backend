@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.LinkedMultiValueMap;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
@@ -28,7 +30,8 @@ import jakarta.servlet.http.HttpSession;
 import lombok.Data;
 
 @RestController
-@CrossOrigin(origins = "${cors.allowed.origins}")
+@CrossOrigin(origins = "${cors.allowed.origins}", allowCredentials = "true", // 세션/쿠키 사용
+    methods = { RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE, RequestMethod.OPTIONS })
 public class UserController {
   @Autowired
   private UserDao dao;
@@ -137,8 +140,17 @@ public class UserController {
     dao.updateUserNickname(vo);
   }
 
-  @GetMapping("/user/mypage")
-  public UserVO mypage(@RequestBody UserVO vo) {
+  @GetMapping("/user/session")
+  public UserVO mypage(HttpSession session) {
+    UserVO user = (UserVO) session.getAttribute("user");
+
+    if (user == null) {
+      return null;
+    }
+
+    // 세션의 이메일로 사용자 정보 조회
+    UserVO vo = new UserVO();
+    vo.setEmail(user.getEmail());
     return dao.getUser(vo);
   }
 

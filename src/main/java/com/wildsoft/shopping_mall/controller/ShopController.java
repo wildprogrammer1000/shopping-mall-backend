@@ -15,13 +15,14 @@ import org.springframework.web.bind.annotation.GetMapping;
 import java.util.List;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-
+import org.springframework.web.bind.annotation.RequestMethod;
 
 @RestController
-@CrossOrigin(origins = "${cors.allowed.origins}")
+@CrossOrigin(origins = "${cors.allowed.origins}", allowCredentials = "true", // 세션/쿠키 사용
+    methods = { RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE, RequestMethod.OPTIONS })
 public class ShopController {
 
-  @Autowired 
+  @Autowired
   private ShopDao dao;
 
   // 상품
@@ -46,18 +47,18 @@ public class ShopController {
 
   @PostMapping("/updateProduct")
   public void updateProduct(@RequestBody ProductVO vo) {
-    
+
     dao.updateProduct(vo);
   }
-  
+
   @PostMapping("/deleteProduct")
   public void deleteProduct(@RequestBody ProductVO vo) {
-    
+
     dao.deleteProduct(vo);
   }
 
   // 장바구니
-  @GetMapping("/getCartList")
+  @PostMapping("/getCartList")
   public List<CartVO> getCartList(@RequestBody CartVO vo) {
 
     return dao.getCartList(vo);
@@ -69,7 +70,7 @@ public class ShopController {
 
     if (cart == null) {
       dao.insertCart(vo);
-      
+
       return "added to cart";
     } else {
       cart.setQuantity(cart.getQuantity() + vo.getQuantity());
@@ -86,6 +87,7 @@ public class ShopController {
 
   @PostMapping("/updateCart")
   public void updateCart(@RequestBody CartVO vo) {
+    
     dao.updateCart(vo);
   }
 
@@ -111,5 +113,5 @@ public class ShopController {
       dao.insertOrder(vo);
     }
   }
-  
+
 }
