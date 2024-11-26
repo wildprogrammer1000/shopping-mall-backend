@@ -64,8 +64,14 @@
 			select count(*) from shipping_infos where id = #{id} and is_default = 1
 	</select>
 
-	<update id="updateShippingInfosIsDefault" parameterType="com.wildsoft.shopping_mall.user.ShippingInfoVO">
+	<!-- 해당 사용자의 모든 배송지의 is_default를 0으로 변경 -->
+	<update id="updateAllShippingInfosIsDefault" parameterType="com.wildsoft.shopping_mall.user.ShippingInfoVO">
 		update shipping_infos set is_default = 0 where id = #{id}
+	</update>
+
+	<!-- 특정 배송지의 is_default를 1로 변경 -->
+	<update id="updateShippingInfoIsDefault" parameterType="com.wildsoft.shopping_mall.user.ShippingInfoVO">
+    update shipping_infos set is_default = 1 where shipping_id = #{shipping_id}
 	</update>
 
 	<insert id="insertShippingInfo" parameterType="com.wildsoft.shopping_mall.user.ShippingInfoVO">
@@ -74,7 +80,7 @@
 	</insert>
 
 	<select id="getShippingInfosList" parameterType="com.wildsoft.shopping_mall.user.ShippingInfoVO">
-		select * from shipping_infos where id = #{id}
+		select * from shipping_infos where id = #{id} order by shipping_id desc
 	</select>
 
 	<delete id="deleteShippingInfo" parameterType="com.wildsoft.shopping_mall.user.ShippingInfoVO">

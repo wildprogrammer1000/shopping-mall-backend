@@ -13,7 +13,8 @@ public interface UserDao {
 
   // 배송지
   int getShippingInfosIsDefault(ShippingInfoVO vo);
-  void updateShippingInfosIsDefault(ShippingInfoVO vo);
+  void updateAllShippingInfosIsDefault(ShippingInfoVO vo);
+  void updateShippingInfoIsDefault(ShippingInfoVO vo);
   void insertShippingInfo(ShippingInfoVO vo);
   List<ShippingInfoVO> getShippingInfosList(ShippingInfoVO vo);
   void deleteShippingInfo(ShippingInfoVO vo);

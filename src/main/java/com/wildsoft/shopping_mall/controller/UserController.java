@@ -151,26 +151,34 @@ public class UserController {
     // 세션의 이메일로 사용자 정보 조회
     UserVO vo = new UserVO();
     vo.setEmail(user.getEmail());
+
     return dao.getUser(vo);
   }
 
   // 배송지
   @PostMapping("/user/insertShippingInfo")
   public void insertShippingInfo(@RequestBody ShippingInfoVO vo) {
-    // 1. shippingInfos 테이블에 해당 id의 is_default 가 1인 컬럼이 있는지 확인하는 쿼리
-    int isDefaultCount = dao.getShippingInfosIsDefault(vo);
-
-    // 2. 테이블에 is_default가 1인 컬럼이 있는데 1로 선택한 경우 - spippingInfos 테이블의 is_default 컬럼
-    // 나머지를 모두 0으로 수정하는 쿼리
-    if (isDefaultCount == 1) {
-      dao.updateShippingInfosIsDefault(vo);
+    // 1. 새로운 배송지 추가인 경우
+    if (vo.getAddress() != null) {
+      // 기본 배송지로 설정하는 경우
+      if (vo.getIs_default() == 1) {
+        // 기존 기본 배송지들을 모두 0으로 변경
+        dao.updateAllShippingInfosIsDefault(vo);
+      }
+      dao.insertShippingInfo(vo);
     }
-    // 3. insert 쿼리 (id, name, phone, address, is_default, nickname)
-    dao.insertShippingInfo(vo);
+    // 2. 기존 배송지의 기본 배송지 설정만 변경하는 경우
+    else if (vo.getShipping_id() != 0) {
+      // 다른 배송지들을 모두 0으로 변경
+      dao.updateAllShippingInfosIsDefault(vo);
+      // 선택한 배송지를 기본 배송지로 설정
+      dao.updateShippingInfoIsDefault(vo);
+    }
   }
 
-  @GetMapping("/user/shippingInfosList")
+  @PostMapping("/user/shippingInfosList")
   public List<ShippingInfoVO> shippingInfosList(@RequestBody ShippingInfoVO vo) {
+
     return dao.getShippingInfosList(vo);
   }
 
