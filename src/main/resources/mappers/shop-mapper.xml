@@ -93,9 +93,13 @@
   <select id="getCartList" 
     parameterType="com.wildsoft.shopping_mall.shop.CartVO"
     resultType="com.wildsoft.shopping_mall.shop.CartVO">
-      select id, cart_id, product_id, product_price, quantity, 
-      (quantity * product_price) as total_price, created_at, updated_at
-      from carts where id = #{id}
+      select c.id, c.cart_id, c.product_id, c.product_price, c.quantity,
+        (c.quantity * c.product_price) as total_price, 
+        c.created_at, c.updated_at,
+        p.product_name, p.product_description, p.category
+      from carts c
+      join products p ON c.product_id = p.product_id
+      where c.id = #{id}
   </select>
 
   <select id="findCartItem" 
@@ -116,10 +120,6 @@
 
   <delete id="deleteCart" parameterType="com.wildsoft.shopping_mall.shop.CartVO">
     delete from carts where id = #{id} and product_id = #{product_id}
-  </delete>
-
-  <delete id="deleteCartAll" parameterType="com.wildsoft.shopping_mall.shop.CartVO">
-    delete from carts where id = #{id}
   </delete>
 
   <!-- 주문하기 -->

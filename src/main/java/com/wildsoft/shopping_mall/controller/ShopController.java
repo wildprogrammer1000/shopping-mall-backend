@@ -80,14 +80,9 @@ public class ShopController {
     }
   }
 
-  @PostMapping("/deleteCart")
-  public void deleteCart(@RequestBody CartVO vo) {
-    dao.deleteCart(vo);
-  }
-
   @PostMapping("/updateCart")
   public void updateCart(@RequestBody CartVO vo) {
-    
+
     dao.updateCart(vo);
   }
 
@@ -98,9 +93,11 @@ public class ShopController {
     }
   }
 
-  @PostMapping("/deleteCartAll")
-  public void deleteCartAll(@RequestBody CartVO vo) {
-    dao.deleteCartAll(vo);
+  @PostMapping("/deleteCart")
+  public void deleteCart(@RequestBody List<CartVO> list) {
+    for (CartVO vo : list) {
+      dao.deleteCart(vo);
+    }
   }
 
   // 주문하기
