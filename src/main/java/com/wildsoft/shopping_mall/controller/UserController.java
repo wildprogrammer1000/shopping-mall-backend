@@ -1,13 +1,10 @@
 package com.wildsoft.shopping_mall.controller;
 
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.util.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.LinkedMultiValueMap;
@@ -28,6 +25,7 @@ import com.wildsoft.shopping_mall.user.UserVO;
 import io.github.cdimascio.dotenv.Dotenv;
 import jakarta.servlet.http.HttpSession;
 import lombok.Data;
+
 
 @RestController
 @CrossOrigin(origins = "${cors.allowed.origins}", allowCredentials = "true", // 세션/쿠키 사용
@@ -154,6 +152,12 @@ public class UserController {
 
     return dao.getUser(vo);
   }
+
+  @GetMapping("/user/logout")
+  public void logout(HttpSession session) {
+    session.invalidate();
+  }
+  
 
   // 배송지
   @PostMapping("/user/insertShippingInfo")
