@@ -8,7 +8,7 @@ public class ShippingInfoVO {
   private int id;
   private String name;
   private String phone;
-  private String address;
+  private String shipping_address;
   private int is_default;
   private String nickname;
   private String created_at;

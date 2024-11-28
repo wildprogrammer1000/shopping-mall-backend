@@ -75,8 +75,8 @@
 	</update>
 
 	<insert id="insertShippingInfo" parameterType="com.wildsoft.shopping_mall.user.ShippingInfoVO">
-		insert into shipping_infos (id, name, phone, address, is_default, nickname)	
-		values (#{id}, #{name}, #{phone}, #{address}, #{is_default}, #{nickname})
+		insert into shipping_infos (id, name, phone, shipping_address, is_default, nickname)	
+		values (#{id}, #{name}, #{phone}, #{shipping_address}, #{is_default}, #{nickname})
 	</insert>
 
 	<select id="getShippingInfosList" parameterType="com.wildsoft.shopping_mall.user.ShippingInfoVO">

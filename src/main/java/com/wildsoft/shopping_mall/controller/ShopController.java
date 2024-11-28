@@ -1,10 +1,13 @@
 package com.wildsoft.shopping_mall.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.wildsoft.shopping_mall.shop.CartVO;
+import com.wildsoft.shopping_mall.shop.OrderItemVO;
 import com.wildsoft.shopping_mall.shop.OrderVO;
 import com.wildsoft.shopping_mall.shop.ProductResponseVO;
 import com.wildsoft.shopping_mall.shop.ProductVO;
@@ -12,10 +15,14 @@ import com.wildsoft.shopping_mall.shop.ShopDao;
 
 import org.springframework.web.bind.annotation.GetMapping;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.transaction.annotation.Transactional;
 
 @RestController
 @CrossOrigin(origins = "${cors.allowed.origins}", allowCredentials = "true", // 세션/쿠키 사용
@@ -101,14 +108,56 @@ public class ShopController {
   }
 
   // 주문하기
-  @PostMapping("/addOrder")
-  public void addOrder(@RequestBody List<OrderVO> list) {
-    for (OrderVO vo : list) {
-      CartVO cart = new CartVO();
-      cart.setProduct_id(vo.getProduct_id());
-      dao.deleteCart(cart);
-      dao.insertOrder(vo);
+  @PostMapping("/order/complete")
+  @Transactional
+  public ResponseEntity<Map<String, Object>> completeOrder(@RequestBody Map<String, Object> orderData) {
+    try {
+      // 결제 상태 확인
+      String paymentStatus = (String) orderData.get("paymentStatus");
+      if (!"SUCCESS".equals(paymentStatus)) {
+        throw new RuntimeException("결제가 성공적으로 완료되지 않았습니다.");
+      }
+      // 주문 정보 저장
+      OrderVO orderVO = new OrderVO();
+
+      Map<String, Object> shippingInfo = (Map<String, Object>) orderData.get("shippingInfo");
+      orderVO.setId((Integer) shippingInfo.get("id"));
+      orderVO.setName((String) shippingInfo.get("name"));
+      orderVO.setPhone((String) shippingInfo.get("phone"));
+      orderVO.setShipping_address((String) shippingInfo.get("shipping_address"));
+      orderVO.setOrder_status("결제완료");
+      orderVO.setShipping_fee((Integer) orderData.get("shippingFee"));
+      orderVO.setTotal_amount((Integer) orderData.get("totalAmount"));
+      orderVO.setPayment_method("Card");
+      dao.insertOrder(orderVO);
+
+      int orderId = orderVO.getOrder_id();
+      // 주문 상품 상세 정보 저장
+      List<Map<String, Object>> productList = (List<Map<String, Object>>) orderData.get("products");
+      for (Map<String, Object> product : productList) {
+        OrderItemVO orderItemVO = new OrderItemVO();
+        orderItemVO.setOrder_id(orderId);
+        orderItemVO.setProduct_id((Integer) product.get("product_id"));
+        orderItemVO.setQuantity((Integer) product.get("quantity"));
+        orderItemVO.setTotal_price((Integer) product.get("total_price"));
+        dao.insertOrderItem(orderItemVO);
+        // 장바구니에서 제품 삭제
+        CartVO cartVO = new CartVO();
+        cartVO.setId((Integer) product.get("id"));
+        cartVO.setProduct_id((Integer) product.get("product_id"));
+        dao.deleteCart(cartVO);
+      }
+
+      Map<String, Object> response = new HashMap<>();
+      response.put("message", "주문이 성공적으로 완료되었습니다.");
+      response.put("orderData", orderData);
+
+      return ResponseEntity.ok(response);
+    } catch (Exception e) {
+      e.printStackTrace();
+      Map<String, Object> errorResponse = new HashMap<>();
+      errorResponse.put("error", e.getMessage());
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
     }
   }
-
 }

@@ -163,7 +163,7 @@ public class UserController {
   @PostMapping("/user/insertShippingInfo")
   public void insertShippingInfo(@RequestBody ShippingInfoVO vo) {
     // 1. 새로운 배송지 추가인 경우
-    if (vo.getAddress() != null) {
+    if (vo.getShipping_address() != null) {
       // 기본 배송지로 설정하는 경우
       if (vo.getIs_default() == 1) {
         // 기존 기본 배송지들을 모두 0으로 변경

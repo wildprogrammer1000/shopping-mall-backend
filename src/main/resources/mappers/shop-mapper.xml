@@ -123,8 +123,16 @@
   </delete>
 
   <!-- 주문하기 -->
-  <insert id="insertOrder" parameterType="com.wildsoft.shopping_mall.shop.OrderVO">
-    insert into orders (order_id, id, product_id, quantity, total_price, shipping_fee, shipping_address)
-    values (#{id}, #{product_id}, #{product_price}, #{quantity})
+  <insert id="insertOrder" parameterType="com.wildsoft.shopping_mall.shop.OrderVO"
+      useGeneratedKeys="true" keyProperty="order_id">
+    insert into orders (id, shipping_fee, total_amount, order_status, name, 
+                        phone, shipping_address, payment_method)
+    values (#{id}, #{shipping_fee}, #{total_amount}, '결제완료', #{name}, 
+            #{phone}, #{shipping_address}, #{payment_method})
+  </insert> 
+
+  <insert id="insertOrderItem" parameterType="com.wildsoft.shopping_mall.shop.OrderItemVO">
+    insert into order_items (order_id, product_id, quantity, total_price)
+    values (#{order_id}, #{product_id}, #{quantity}, #{total_price})
   </insert>
 </mapper>

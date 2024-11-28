@@ -6,13 +6,13 @@ import lombok.Data;
 public class OrderVO {
   private int order_id;
   private int id;
-  private int product_id;
-  private int quantity;
   private int shipping_fee;
-  private int total_price;
-  private String status;
+  private int total_amount;
+  private String order_status;
+  private String name;
+  private String phone;
   private String shipping_address;
   private String payment_method;
-  private String created_at;
+  private String order_date;
   private String updated_at;
 }
