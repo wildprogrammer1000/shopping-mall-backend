@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.wildsoft.shopping_mall.shop.CartVO;
 import com.wildsoft.shopping_mall.shop.OrderItemVO;
 import com.wildsoft.shopping_mall.shop.OrderVO;
+import com.wildsoft.shopping_mall.shop.PaymentResponseVO;
 import com.wildsoft.shopping_mall.shop.ProductResponseVO;
 import com.wildsoft.shopping_mall.shop.ProductVO;
 import com.wildsoft.shopping_mall.shop.ShopDao;
@@ -125,7 +126,9 @@ public class ShopController {
       orderVO.setName((String) shippingInfo.get("name"));
       orderVO.setPhone((String) shippingInfo.get("phone"));
       orderVO.setShipping_address((String) shippingInfo.get("shipping_address"));
+
       orderVO.setOrder_status("결제완료");
+      orderVO.setOrder_name((String) orderData.get("order_name"));
       orderVO.setShipping_fee((Integer) orderData.get("shippingFee"));
       orderVO.setTotal_amount((Integer) orderData.get("totalAmount"));
       orderVO.setPayment_method("Card");
@@ -159,5 +162,17 @@ public class ShopController {
       errorResponse.put("error", e.getMessage());
       return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
     }
+  }
+
+  @PostMapping("/getPaymentAllList")
+  public List<OrderVO> getPaymentAllList(@RequestBody OrderVO vo) {
+
+    return dao.getPaymentAllList(vo);
+  }
+
+  @PostMapping("/getPaymentOneList")
+  public List<PaymentResponseVO> getPaymentOneList(@RequestBody PaymentResponseVO vo) {
+
+    return dao.getPaymentOneList(vo);
   }
 }

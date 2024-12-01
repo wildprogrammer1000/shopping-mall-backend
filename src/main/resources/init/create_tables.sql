@@ -54,6 +54,7 @@ CREATE TABLE IF NOT EXISTS orders (
   order_id INT AUTO_INCREMENT PRIMARY KEY, -- 주문 ID (기본키)
   id INT NOT NULL, -- 사용자 ID (외래키)
   -- product_image_name VARCHAR(255) DEFAULT 'space.png', -- 상품 이미지
+  order_name VARCHAR(255) NOT NULL, -- 결제 이름
   shipping_fee DECIMAL(10, 2) NOT NULL, -- 배송비
   total_amount DECIMAL(10, 2) NOT NULL, -- 전체 상품 총 주문 금액
   order_status ENUM('결제완료', '결제취소', '배송준비', '배송중', '배송완료', '교환', '환불') NOT NULL, -- 주문 상태

@@ -3,7 +3,7 @@ package com.wildsoft.shopping_mall.shop;
 import lombok.Data;
 
 @Data
-public class OrderVO {
+public class PaymentResponseVO {
   private int order_id;
   private int id;
   private String order_name;
@@ -14,6 +14,12 @@ public class OrderVO {
   private String phone;
   private String shipping_address;
   private String payment_method;
-  private String order_date;
-  private String updated_at;
+  
+  private int order_item_id;
+  private int product_id;
+  private String product_name;
+  private String product_description;
+  private int product_price;
+  private int quantity;
+  private int total_price;
 }

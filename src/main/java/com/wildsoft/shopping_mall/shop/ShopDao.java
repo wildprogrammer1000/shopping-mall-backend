@@ -24,4 +24,8 @@ public interface ShopDao {
   // 주문하기
   void insertOrder(OrderVO orderVO);
   void insertOrderItem(OrderItemVO orderItemVO);
+
+  // 결제
+  List<OrderVO> getPaymentAllList(OrderVO vo);
+  List<PaymentResponseVO> getPaymentOneList(PaymentResponseVO vo);
 }

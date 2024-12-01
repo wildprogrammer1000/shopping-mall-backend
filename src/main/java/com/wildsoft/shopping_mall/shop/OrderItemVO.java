@@ -11,5 +11,9 @@ public class OrderItemVO {
   private int total_price;
   private String order_date;
   private String updated_at;
+
+  private String product_name;
+  private String product_description;
+  private int product_price;
 }
 
